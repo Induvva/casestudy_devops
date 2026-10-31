@@ -81,6 +81,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .map(field => field.value.trim())
             .filter(value => value !== '');
 
+        const normalizedDestinations = destinations.map(value =>
+            value.toLowerCase().replace(/\s+/g, ' ')
+        );
+
         const from = tripForm.elements['from_location'].value.trim();
         const budget = tripForm.elements['budget'].value;
         const startDate = tripForm.elements['startDate'].value;
@@ -90,6 +94,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!from || destinations.length === 0 ||
             !budget || !startDate || !duration || !travelType) {
             alert('Please fill in all fields.');
+            return;
+        }
+
+        if (new Set(normalizedDestinations).size !== normalizedDestinations.length) {
+            alert('Please remove duplicate destinations.');
             return;
         }
 
