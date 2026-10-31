@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trip History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='tripplan.css') }}" />
+    <style>
+        body {
+            background-color: #f4f9ff;
+            color: #1d3557;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #e63946;
+            margin-bottom: 30px;
+        }
+        .trip-item {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .trip-item h2 {
+            color: #457B9D;
+        }
+        .trip-item p {
+            margin: 5px 0;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            font-weight: 600;
+            color: #457B9D;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trip History</h1>
+    {% if trip_history %}
+        <div>
+            {% for trip in trip_history %}
+                <div class="trip-item">
+                    <h2>Trip to {{ trip.destination }}</h2>
+                    <p><strong>From:</strong> {{ trip.from_location }}</p>
+                    <p><strong>Budget:</strong> {{ trip.budget }}</p>
+                    <p><strong>Start Date:</strong> {{ trip.start_date }}</p>
+                    <p><strong>End Date:</strong> {{ trip.end_date }}</p>
+                    <p><strong>Duration:</strong> {{ ((trip.end_date | todatetime) - (trip.start_date | todatetime)).days }} days</p>
+                    {% if trip.id not in feedback_trip_ids %}
+                        <p><a href="{{ url_for('trip_feedback', trip_id=trip.id) }}" class="feedback-link">Give Feedback</a></p>
+                    {% else %}
+                        <p><em>Feedback submitted</em></p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No past trips found.</p>
+    {% endif %}
+    <p><a href="{{ url_for('main') }}" class="back-link">Back to Main</a></p>
+</body>
+</html>

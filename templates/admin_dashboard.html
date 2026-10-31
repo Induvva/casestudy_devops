@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - TripMate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='tripplan.css') }}">
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, {{ username }} (Admin)</p>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <hr>
+
+    <h2>User Feedback</h2>
+    {% if feedback_entries %}
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Destination</th>
+                <th>Enjoyed Most</th>
+                <th>Could Be Better</th>
+                <th>Recommend Friend</th>
+                <th>Issues</th>
+                <th>Star Rating</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feedback in feedback_entries %}
+            <tr>
+                <td>{{ feedback.id }}</td>
+                <td>{{ feedback.username }}</td>
+                <td>{{ feedback.destination }}</td>
+                <td>{{ feedback.enjoyed_most }}</td>
+                <td>{{ feedback.could_be_better }}</td>
+                <td>{{ feedback.recommend_friend }}</td>
+                <td>{{ feedback.issues }}</td>
+                <td>{{ feedback.star_rating }}</td>
+                <td>{{ feedback.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No feedback entries found.</p>
+    {% endif %}
+
+    <hr>
+    <h2>User Trip Activity</h2>
+    {% if user_trip_counts %}
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Number of Trips</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in user_trip_counts %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.trip_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No user trip data found.</p>
+    {% endif %}
+</body>
+</html>

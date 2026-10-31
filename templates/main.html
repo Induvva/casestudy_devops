@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TripMate Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash-messages" style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+              {% for message in messages %}
+                <div class="flash-message">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        <header>
+            <h1>Welcome to TripMate</h1>
+            <p>Hello, {{ username }}! Let's plan your next adventure.</p>
+        </header>
+
+        <div class="user-dropdown">
+            <div class="user-icon" onclick="toggleDropdown()">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div id="dropdownMenu" class="dropdown-content">
+                <a href="{{ url_for('present_trip') }}"><i class="fas fa-suitcase"></i> My Present Trips</a>
+                <a href="{{ url_for('trip_history') }}"><i class="fas fa-history"></i> Trip History</a>
+                <a href="{{ url_for('view_feedback') }}"><i class="fas fa-comments"></i> View Feedback</a>
+                <a href="{{ url_for('logout') }}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Discover Your Next Destination</h2>
+                <p>Unlock personalized travel itineraries powered by AI. Tell us where you want to go, and we'll handle the rest!</p>
+                <a href="{{ url_for('tripplan') }}" class="hero-button"><i class="fas fa-compass"></i> Start Exploring</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>TripMate Features</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <i class="fas fa-magic"></i>
+                    <h3>AI-Powered Itineraries</h3>
+                    <p>Get custom-made travel plans based on your preferences and budget.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Explore Diverse Destinations</h3>
+                    <p>Discover popular and off-the-beaten-path locations around the globe.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-coins"></i>
+                    <h3>Budget-Friendly Options</h3>
+                    <p>Find itineraries that fit your budget, from low-cost to luxurious.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-heart"></i>
+                    <h3>Save Your Favorite Trips</h3>
+                    <p>Keep track of your past and planned adventures in your trip history.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="quote">
+            <h2>“Travel isn’t always pretty. It isn’t always comfortable. But it changes you.”</h2>
+            <p>- Anthony Bourdain</p>
+
+        <div class="action">
+            <a href="{{ url_for('tripplan') }}" class="trip-button"><i class="fas fa-plane-departure"></i> Start Planning Your Trip</a>
+        </div>
+        <div class="overlay" id="dropdownOverlay"></div>
+
+    </div>
+
+    <script>
+        function toggleDropdown() {
+            document.getElementById("dropdownMenu").classList.toggle("show");
+        }
+
+        // Close the dropdown if the user clicks outside of it
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-icon')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

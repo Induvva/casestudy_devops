@@ -1,0 +1,334 @@
+/* trip_plan.css */
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f4f9ff;
+    color: #1d3557;
+    line-height: 1.6;
+}
+
+/* Container */
+.plan-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+/* Speech Control Icon Buttons */
+.speech-controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.speech-controls button {
+    font-size: 20px;
+    background-color: #ffffff;
+    color: #1d3557;
+    border: 2px solid #1d3557;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.speech-controls button:hover {
+    background-color: #e63946;
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, #1D3557, #457B9D);
+    padding: 20px 30px;
+    border-bottom: 2px solid #ddd;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.header-content p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #dfe6f0;
+}
+
+.logout-button {
+    padding: 8px 16px;
+    background-color: #e63946;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #d62828;
+}
+/* Compact Horizontal Radio Buttons */
+.radio-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #f1f5fa;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    transition: background-color 0.3s ease;
+}
+
+.radio-label:hover {
+    background-color: #e0ecf5;
+}
+
+.radio-label input[type="radio"] {
+    accent-color: #e63946;
+    margin: 0;
+    width: 16px;
+    height: 16px;
+}
+
+/* Form Section */
+.form-section {
+    background: white;
+    padding: 40px 30px;
+    margin: 40px auto;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+    transition: transform 0.3s ease;
+}
+
+.form-section:hover {
+    transform: translateY(-3px);
+}
+
+.form-section h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #1D3557;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #457B9D;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: #457B9D;
+    outline: none;
+}
+
+/* Button */
+.plan-button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to right, #E63946, #F37272);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.plan-button:hover {
+    background: linear-gradient(to right, #D62828, #FF4C4C);
+}
+
+/* Loader */
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #E63946;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Results Section */
+.results-section {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    margin: 30px auto;
+    width: 90%;
+    max-width: 800px;
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.results-section.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.results-section h2 {
+    text-align: center;
+    color: #e63946;
+    margin-bottom: 20px;
+}
+
+.result #output {
+    color: #333;
+}
+
+#output h1 {
+    color: #e63946;
+    margin-bottom: 15px;
+    font-size: 26px;
+}
+
+#output h2 {
+    color: #457B9D;
+    margin-bottom: 12px;
+    font-size: 22px;
+}
+
+#output h3 {
+    color: #007BFF;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+#output p {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+#output ul {
+    padding-left: 20px;
+    margin-bottom: 15px;
+    color: #444;
+}
+
+#output li {
+    margin-bottom: 8px;
+}
+
+#output strong {
+    color: #000;
+    font-weight: bold;
+}
+
+/* Button spacing in results */
+.results-section .plan-button {
+    margin-top: 12px;
+}
+
+/* Smooth Fade */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .header-content h1 {
+        font-size: 22px;
+    }
+
+    .header-content p {
+        font-size: 12px;
+    }
+
+    .form-section, .results-section {
+        padding: 20px;
+    }
+}
+
+/* Button styles for plan another trip, back to main, logout */
+.plan-another-trip-button,
+.back-to-main-button,
+.logout-button {
+    display: inline-block;
+    background-color: #c92020;
+    color: #faf4ee;
+    padding: 10px 18px;
+    margin: 5px 8px 5px 0;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    border: 2px solid #1D3557;
+}
+
+.plan-another-trip-button:hover,
+.back-to-main-button:hover,
+.logout-button:hover {
+    background-color: #457B9D;
+    color: #F1FAEE;
+    border-color: #457B9D;
+}
+
+/* Additional focus styles for accessibility */
+.plan-another-trip-button:focus,
+.back-to-main-button:focus,
+.logout-button:focus {
+    outline: 3px solid #A8DADC;
+    outline-offset: 2px;
+}

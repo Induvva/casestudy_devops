@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .show-password {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .show-password input[type="checkbox"] {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Sign Up</h2>
+        <form method="POST" onsubmit="return validatePassword()">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+            </div>
+            <p id="passwordError" class="error-message"></p>
+
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+            </div>
+            <p id="confirmPasswordError" class="error-message"></p>
+
+            <div class="show-password">
+                <input type="checkbox" id="showPassword" onclick="togglePasswordVisibility()">
+                <label for="showPassword">Show Password</label>
+            </div>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <script>
+        function validatePassword() {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm_password").value;
+            const passwordError = document.getElementById("passwordError");
+            const confirmPasswordError = document.getElementById("confirmPasswordError");
+            let isValid = true;
+
+            if (password.length < 8) {
+                passwordError.textContent = "Password must be at least 8 characters long.";
+                isValid = false;
+            } else {
+                passwordError.textContent = "";
+            }
+
+            const uppercaseRegex = /[A-Z]/;
+            const lowercaseRegex = /[a-z]/;
+            const digitRegex = /[0-9]/;
+            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+
+            let strengthErrors = [];
+            if (!uppercaseRegex.test(password)) strengthErrors.push("uppercase letter");
+            if (!lowercaseRegex.test(password)) strengthErrors.push("lowercase letter");
+            if (!digitRegex.test(password)) strengthErrors.push("digit");
+            if (!specialCharRegex.test(password)) strengthErrors.push("special character");
+
+            if (strengthErrors.length > 0) {
+                passwordError.textContent += (passwordError.textContent ? " and " : "") + "Password must contain at least one " + strengthErrors.join(", ") + ".";
+                isValid = false;
+            }
+
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = "Passwords do not match.";
+                isValid = false;
+            } else {
+                confirmPasswordError.textContent = "";
+            }
+
+            return isValid;
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password");
+            const confirmPasswordInput = document.getElementById("confirm_password");
+            const showPasswordCheckbox = document.getElementById("showPassword");
+
+            if (showPasswordCheckbox.checked) {
+                passwordInput.type = "text";
+                confirmPasswordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+                confirmPasswordInput.type = "password";
+            }
+        }
+    </script>
+</body>
+</html>

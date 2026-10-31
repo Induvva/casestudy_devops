@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripMate - AI Travel Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">TripMate 📍</div>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('login') }}">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="{{ url_for('login') }}" class="btn">Get Started</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section with Background Image -->
+    <section class="hero">
+        <img src="{{ url_for('static', filename='images/img3.png') }}" alt="Travel Background" class="hero-img">
+        <div class="hero-content">
+            <h1>Your AI Travel Companion 📍</h1>
+            <p>Plan your trips effortlessly with AI-powered itineraries and personalized recommendations.</p>
+            <a href="{{ url_for('login') }}" class="btn">Start Planning</a>
+        </div>
+    </section>
+
+    <!-- Features Section with Icons -->
+    <section id="features" class="features">
+        <h2>Why Choose TripMate?</h2>
+        <div class="feature-grid">
+            <div class="feature">
+                <img src="{{ url_for('static', filename='images/21308.jpg') }}" alt="AI Itineraries">
+                <h3>AI-Powered Itineraries</h3>
+                <p>Get personalized trip plans tailored to your budget, duration, and preferences.</p>
+            </div>
+            <div class="feature">
+                <img src="{{ url_for('static', filename='images/images.png') }}" alt="Top Attractions">
+                <h3>Top Attractions & Activities</h3>
+                <p>Discover must-visit landmarks, local experiences, and hidden gems curated for your destination.</p>
+            </div>
+            <div class="feature">
+                <img src="{{ url_for('static', filename='images/personal-travel-planner-uk-v2.jpg') }}" alt="Budget Planning">
+                <h3>Smart Budget Planning</h3>
+                <p>Estimate expenses and get cost-effective travel recommendations to maximize your experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section with Image -->
+    <!-- Removed About Section as per user request to remove about feedback -->
+    <!--
+    <section id="about" class="about">
+        <div class="about-content">
+            <img src="{{ url_for('static', filename='images/top-view-hand-holding-smartphone.jpg') }}" alt="About TripMate">
+            <div class="about-text">
+                <h2>About TripMate</h2>
+                <p>TripMate is an AI-driven travel planner designed to make your trips seamless and stress-free. 
+                   Our intelligent algorithms analyze your preferences, budget, and real-time data to curate the best travel experience.</p>
+                <p>Founded in 2025, we are committed to revolutionizing the way people explore the world.</p>
+            </div>
+        </div>
+    </section>    
+    -->
+
+    <!-- Contact Section with Social Media Icons -->
+    <section id="contact" class="contact">
+        <h2>Contact Us</h2>
+        <p>Have questions? We'd love to hear from you!</p>
+        <p>Email: <a href="mailto:tripmate123@gmail.com">tripmate123@gmail.com</a></p>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 TripMate. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
+include my hoome page and ur homepage mix it up and give most beautiful and attractive one

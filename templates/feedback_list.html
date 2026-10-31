@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>View Feedback - TripMate</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tripplan.css') }}">
+</head>
+<body>
+    <div class="plan-container">
+        <header>
+            <div class="header-content">
+                <h1>TripMate - User Feedback</h1>
+                <a href="{{ url_for('main') }}" class="logout-button">Back to Main</a>
+                <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+            </div>
+        </header>
+
+        <section class="feedback-list-section">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="flash-messages">
+                  {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+            <h2>Submitted Feedback</h2>
+            {% if feedback_entries %}
+                <table class="feedback-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 8px;">Username</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;">Destination</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;">Feedback</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;">Star Rating</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;">Submitted At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in feedback_entries %}
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ entry.username }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ entry.destination }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ entry.enjoyed_most or entry.feedback_text }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ entry.star_rating or 'N/A' }}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">{{ entry.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+                </table>
+            {% else %}
+                <p>No feedback entries found.</p>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

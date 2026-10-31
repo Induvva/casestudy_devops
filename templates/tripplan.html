@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Planner | TripMate</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #333;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: #172b4d;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            font-size: 24px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 22px;
+            font-size: 15px;
+        }
+
+        .navbar a:hover {
+            color: #8ec5ff;
+        }
+
+        /* Main Container */
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 35px auto;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            color: #172b4d;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #666;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2878d0;
+        }
+
+        /* Destination Fields */
+        .destination-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .destination-field {
+            flex: 1;
+            min-width: 0;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .remove-destination {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0 14px;
+            cursor: pointer;
+        }
+
+        .remove-destination:hover {
+            background: #b52a37;
+        }
+
+        .add-button {
+            background: #e8f1fc;
+            color: #1766b1;
+            border: 1px solid #1766b1;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .add-button:hover {
+            background: #d5e7fa;
+        }
+
+        /* Budget Options */
+        .budget-options {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .budget-options label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .budget-options input {
+            width: auto;
+        }
+
+        /* Buttons */
+        .plan-button {
+            width: 100%;
+            background: #1769aa;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 7px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .plan-button:hover {
+            background: #10548c;
+        }
+
+        .secondary-button {
+            background: #198754;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .secondary-button:hover {
+            background: #146c43;
+        }
+
+        /* Loader */
+        #loader {
+            display: none;
+            text-align: center;
+            margin: 25px 0;
+            color: #1769aa;
+            font-weight: bold;
+        }
+
+        /* Itinerary Result */
+        #itineraryResult {
+            display: none;
+            background: white;
+            padding: 25px;
+            margin-top: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        #itineraryResult h2 {
+            color: #172b4d;
+            margin-bottom: 15px;
+        }
+
+        #output {
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        #output h1,
+        #output h2,
+        #output h3 {
+            margin: 15px 0 10px;
+            color: #172b4d;
+        }
+
+        #output p {
+            margin-bottom: 10px;
+        }
+
+        #output ul,
+        #output ol {
+            margin: 10px 0 15px 25px;
+        }
+
+        /* Flash Messages */
+        .flash-message {
+            background: #fff3cd;
+            color: #664d03;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            margin-top: 35px;
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar a {
+                margin: 0 7px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .destination-input {
+                flex-wrap: wrap;
+            }
+
+            .remove-destination {
+                padding: 10px;
+            }
+
+            .budget-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <h2>TripMate</h2>
+
+        <div>
+            <a href="{{ url_for('main') }}">Home</a>
+            <a href="{{ url_for('present_trip') }}">My Trips</a>
+            <a href="{{ url_for('trip_history') }}">Trip History</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <div class="heading">
+            <h1>Plan Your Trip</h1>
+            <p>Enter your preferences and let TripMate create your personalized itinerary.</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Trip Planning Form -->
+        <div class="form-card">
+
+            <form id="tripForm" method="POST">
+
+                <!-- Starting Location -->
+                <div class="form-group">
+                    <label for="from_location">Starting Location</label>
+                    <input
+                        type="text"
+                        id="from_location"
+                        name="from_location"
+                        placeholder="Enter your starting city"
+                        required
+                    >
+                </div>
+
+                <!-- Destinations -->
+                <div class="form-group">
+                    <label>Destination(s)</label>
+
+                    <div id="destinationsContainer">
+                        <div class="destination-input">
+                            <input
+                                type="text"
+                                name="destinations"
+                                class="destination-field"
+                                placeholder="Enter destination"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="addDestinationBtn"
+                        class="add-button"
+                    >
+                        + Add Another Destination
+                    </button>
+                </div>
+
+                <!-- Budget -->
+                <div class="form-group">
+                    <label>Choose Your Budget</label>
+
+                    <div class="budget-options">
+                        <label>
+                            <input
+                                type="radio"
+                                name="budget"
+                                value="Low"
+                                required
+                            >
+                            Low
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="budget"
+                                value="Medium"
+                            >
+                            Medium
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="budget"
+                                value="High"
+                            >
+                            High
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Start Date -->
+                <div class="form-group">
+                    <label for="startDate">Travel Start Date</label>
+                    <input
+                        type="date"
+                        id="startDate"
+                        name="startDate"
+                        required
+                    >
+                </div>
+
+                <!-- Duration -->
+                <div class="form-group">
+                    <label for="duration">Duration (Days)</label>
+                    <input
+                        type="number"
+                        id="duration"
+                        name="duration"
+                        min="1"
+                        max="60"
+                        placeholder="Enter number of days"
+                        required
+                    >
+                </div>
+
+                <!-- Travel Type -->
+                <div class="form-group">
+                    <label for="travelType">Travel Type</label>
+
+                    <select
+                        id="travelType"
+                        name="travelType"
+                        required
+                    >
+                        <option value="">Select Travel Type</option>
+                        <option value="Solo">Solo</option>
+                        <option value="Family">Family</option>
+                        <option value="Friends">Friends</option>
+                        <option value="Couple">Couple</option>
+                        <option value="Business">Business</option>
+                    </select>
+                </div>
+
+                <!-- Generate Button -->
+                <button type="submit" class="plan-button">
+                    Generate Itinerary
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- Loading Message -->
+        <div id="loader">
+            Generating your personalized itinerary... Please wait.
+        </div>
+
+        <!-- Generated Itinerary -->
+        <div id="itineraryResult">
+
+            <h2>Your Personalized Itinerary</h2>
+
+            <div id="output"></div>
+
+            <!-- Save Itinerary Form -->
+            <form
+                method="POST"
+                action="{{ url_for('save_itinerary') }}"
+                id="saveItineraryForm"
+                style="display: none;"
+            >
+
+                <input
+                    type="hidden"
+                    name="itinerary_content"
+                    id="itinerary_content"
+                >
+
+                <input
+                    type="hidden"
+                    name="destination"
+                    id="savedDestination"
+                >
+
+                <input
+                    type="hidden"
+                    name="start_date"
+                    id="savedStartDate"
+                >
+
+                <input
+                    type="hidden"
+                    name="duration"
+                    id="savedDuration"
+                >
+
+                <input
+                    type="hidden"
+                    name="from_location"
+                    id="from_location_hidden"
+                >
+
+                <input
+                    type="hidden"
+                    name="budget"
+                    id="hiddenBudget"
+                >
+
+                <button
+                    type="submit"
+                    class="plan-button"
+                    style="margin-top: 15px;"
+                >
+                    Save Itinerary
+                </button>
+
+            </form>
+
+            <!-- Download Button -->
+            <button
+                type="button"
+                id="downloadBtn"
+                class="secondary-button"
+                style="display: none;"
+                onclick="window.print()"
+            >
+                Download / Print Itinerary
+            </button>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 TripMate. Plan your journey with us.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='tripplan_new.js') }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Feedback - TripMate</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='tripplan.css') }}">
+</head>
+<body>
+    <div class="plan-container">
+        <header>
+            <div class="header-content">
+                <div>
+                    <h1>TripMate - Feedback</h1>
+                    <p>We value your feedback. Please share your thoughts below.</p>
+                </div>
+                <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+            </div>
+        </header>
+
+        <section class="form-section">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="flash-messages">
+                  {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('feedback') }}" method="POST">
+                <div class="form-group">
+                    <label for="feedback_text">Your Feedback:</label>
+                    <textarea id="feedback_text" name="feedback_text" rows="6" required style="width: 100%; padding: 10px; font-size: 1rem;"></textarea>
+                </div>
+                <button type="submit" class="plan-button" style="margin-top: 10px;">Submit Feedback</button>
+            </form>
+            <p><a href="{{ url_for('tripplan') }}">Back to Trip Planner</a> | <a href="{{ url_for('main') }}">Back to Main</a></p>
+        </section>
+    </div>
+</body>
+</html>
