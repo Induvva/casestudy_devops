@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -16,19 +17,11 @@ pipeline {
 fi
 .venv/bin/python -m pip install --disable-pip-version-check -r requirements.txt'''
                     } else {
-                        bat '''where py >nul 2>nul
-if not errorlevel 1 (
-    py -3 -m venv .venv
-) else (
-    where python >nul 2>nul
-    if errorlevel 1 (
-        echo Python 3 is required on the Jenkins agent. Install Python and add it to PATH.
-        exit /b 1
-    )
-    python -m venv .venv
-)
+                        bat '''"C:\\Users\\duvva\\AppData\\Local\\Programs\\Python\\Python313\\python.exe" -m venv .venv
 if errorlevel 1 exit /b 1
-.venv\\Scripts\\python.exe -m pip install --disable-pip-version-check -r requirements.txt'''
+
+.venv\\Scripts\\python.exe -m pip install --disable-pip-version-check -r requirements.txt
+if errorlevel 1 exit /b 1'''
                     }
                 }
             }
