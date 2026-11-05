@@ -613,12 +613,20 @@ def generate_itinerary():
     try:
         response = requests.post(url, headers=headers, json=body, timeout=60)
         if not response.ok:
-            try:
-                api_error = response.json().get("error", {}).get("message")
-            except ValueError:
-                api_error = None
-            message = api_error or f"Gemini API returned HTTP {response.status_code}."
-            return jsonify({"success": False, "message": message}), 502
+            print(f"Gemini API HTTP Status: {response.status_code}")
+            print(f"Gemini API Error Response: {response.text[:2000]}")
+
+        try:
+            api_error = response.json().get("error", {}).get("message")
+        except ValueError:
+            api_error = None
+
+        message = api_error or f"Gemini API returned HTTP {response.status_code}."
+
+        return jsonify({
+            "success": False,
+            "message": message
+        }), 502
 
         try:
             result = response.json()
