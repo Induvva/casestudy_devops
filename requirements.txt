@@ -2,3 +2,4 @@ Flask
 APScheduler
 requests
 python-dotenv
+psycopg[binary]

@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tripplanner-postgres
+spec:
+  selector:
+    app: tripplanner-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: tripplanner-postgres
+spec:
+  serviceName: tripplanner-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tripplanner-postgres
+  template:
+    metadata:
+      labels:
+        app: tripplanner-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - name: POSTGRES_DB
+              value: tripplanner
+            - name: POSTGRES_USER
+              value: tripplanner
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tripplanner-db
+                  key: password
+          ports:
+            - containerPort: 5432
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - tripplanner
+                - -d
+                - tripplanner
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

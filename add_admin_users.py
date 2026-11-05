@@ -1,10 +1,14 @@
-import sqlite3
+from getpass import getpass
+
 from werkzeug.security import generate_password_hash
+
+from db import connect
+
 
 def add_admin_user(username, email, password):
     hashed_password = generate_password_hash(password)
     try:
-        with sqlite3.connect('users.db') as con:
+        with connect() as con:
             cur = con.cursor()
             # Check if user already exists
             cur.execute("SELECT * FROM users WHERE username = ?", (username,))
@@ -20,9 +24,10 @@ def add_admin_user(username, email, password):
         print(f"Error adding admin user: {e}")
 
 if __name__ == "__main__":
-    # Change these values as needed
-    admin_username = "admin"
-    admin_email = "admin@example.com"
-    admin_password = "adminpassword"
+    admin_username = input("Admin username: ").strip()
+    admin_email = input("Admin email: ").strip()
+    admin_password = getpass("Admin password: ")
+    if not admin_username or not admin_email or not admin_password:
+        raise SystemExit("Username, email, and password are required.")
 
     add_admin_user(admin_username, admin_email, admin_password)

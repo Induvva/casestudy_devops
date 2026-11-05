@@ -1,9 +1,10 @@
 from flask import Flask, session, render_template, request, redirect, url_for, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
+import psycopg
 from datetime import datetime, timedelta, date
 import json  # For storing itinerary data
 from init_db import init_db  # Import the function
+from db import connect
 from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 import hashlib
@@ -95,7 +96,7 @@ app.jinja_env.globals['timedelta']=timedelta
 def move_past_trips_to_history(username):
     today = date.today()
     try:
-        with sqlite3.connect('users.db', timeout=10) as con:
+        with connect(timeout=10) as con:
             cur = con.cursor()
             # Convert today to string in YYYY-MM-DD format for comparison
             today_str = today.strftime('%Y-%m-%d')
@@ -103,22 +104,22 @@ def move_past_trips_to_history(username):
             updated_rows = cur.rowcount
             con.commit()
             print(f"move_past_trips_to_history: Updated {updated_rows} trips for user {username} on {today_str}")
-    except sqlite3.OperationalError as e:
+    except psycopg.OperationalError as e:
         print(f"Database locked error in move_past_trips_to_history for user {username}: {e}")
 
 def move_all_past_trips_to_history():
     today = date.today()
     try:
-        with sqlite3.connect('users.db', timeout=10) as con:
+        with connect(timeout=10) as con:
             cur = con.cursor()
             # Get all usernames with active trips
             cur.execute("SELECT DISTINCT username FROM trips WHERE is_present = 1")
             users = cur.fetchall()
             
             for user in users:
-                username = user[0]
+                username = user['username']
                 move_past_trips_to_history(username)
-    except sqlite3.OperationalError as e:
+    except psycopg.OperationalError as e:
         print(f"Database locked error in move_all_past_trips_to_history: {e}")
 
 # Add a call to move_all_past_trips_to_history in the main route to ensure trips are moved on user interaction
@@ -150,14 +151,14 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        with sqlite3.connect('users.db') as con:
+        with connect() as con:
             cur = con.cursor()
             cur.execute("SELECT username, email, password, role FROM users WHERE username = ?", (username,))
             user = cur.fetchone()
-            if user and check_password_hash(user[2], password):
-                print(f"Login success for user: {username}, role: {user[3] if len(user) > 3 else 'user'}")  # Debug print
+            if user and check_password_hash(user['password'], password):
+                print(f"Login success for user: {username}, role: {user['role']}")
                 session['username'] = username
-                session['role'] = user[3] if len(user) > 3 else 'user'
+                session['role'] = user['role']
                 return redirect(url_for('main'))
             else:
                 print(f"Login failed for user: {username}")  # Debug print
@@ -184,32 +185,28 @@ def signup():
 
         hashed_password = generate_password_hash(password)
 
-        with sqlite3.connect('users.db') as con:
-            try:
+        try:
+            with connect() as con:
                 cur = con.cursor()
                 cur.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
                             (username, email, hashed_password))
-                con.commit()
-                flash("Account created successfully! Please login.")
-                return redirect(url_for('login'))
-            except sqlite3.IntegrityError:
-                flash("Username already exists!")
-                return redirect(url_for('signup'))
+        except psycopg.IntegrityError:
+            flash("Username already exists!")
+            return redirect(url_for('signup'))
+        flash("Account created successfully! Please login.")
+        return redirect(url_for('login'))
     return render_template('signup.html')
 
 # Additional imports
-import sqlite3
-
 def get_user_interests(username):
-    with sqlite3.connect('users.db') as con:
-        con.row_factory = sqlite3.Row
+    with connect() as con:
         cur = con.cursor()
         cur.execute("SELECT interest FROM user_interests WHERE username = ?", (username,))
         interests = [row['interest'] for row in cur.fetchall()]
     return interests
 
 def update_user_interests(username, interests):
-    with sqlite3.connect('users.db') as con:
+    with connect() as con:
         cur = con.cursor()
         # Delete existing interests
         cur.execute("DELETE FROM user_interests WHERE username = ?", (username,))
@@ -280,7 +277,7 @@ def main():
             flash("Please provide a star rating.")
             return redirect(url_for('main'))
         try:
-            with sqlite3.connect('users.db') as con:
+            with connect() as con:
                 cur = con.cursor()
                 cur.execute("INSERT INTO feedback (username, feedback_text, created_at) VALUES (?, ?, ?)",
                             (username, feedback_text, datetime.now()))
@@ -292,8 +289,7 @@ def main():
             flash("An error occurred while saving your feedback. Please try again.")
             return redirect(url_for('main'))
 
-    with sqlite3.connect('users.db') as con:
-        con.row_factory = sqlite3.Row  # To access columns by name
+    with connect() as con:
         cur = con.cursor()
 
         # Fetch the user's present trips (all)
@@ -367,8 +363,7 @@ def main():
 def present_trip():
     if 'username' in session:
         # Logic to fetch and display the user's current present trip details
-        with sqlite3.connect('users.db') as con:
-            con.row_factory = sqlite3.Row
+        with connect() as con:
             cur = con.cursor()
             cur.execute("SELECT * FROM trips WHERE username = ? AND is_present = 1", (session['username'],))
             present_trips = cur.fetchall()
@@ -397,8 +392,7 @@ def present_trip():
 def trip_history():
     if 'username' in session:
         username = session['username']
-        with sqlite3.connect('users.db') as con:
-            con.row_factory = sqlite3.Row
+        with connect() as con:
             cur = con.cursor()
             # Fetch trips in history
             cur.execute("SELECT * FROM trips WHERE username = ? AND is_present = 0 ORDER BY start_date DESC", (username,))
@@ -464,10 +458,10 @@ def save_itinerary():
         return jsonify({"success": False, "message": f"Invalid date or duration format: {str(e)}"})
 
     try:
-        with sqlite3.connect('users.db') as con:
+        with connect() as con:
             cur = con.cursor()
             cur.execute("INSERT INTO trips (username, destination, start_date, end_date, from_location, budget, itinerary_data, is_present) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        (session['username'], destination, start_date, end_date, from_location, budget, itinerary_data, 1))
+                        (session['username'], destination, start_date.isoformat(), end_date.isoformat(), from_location, budget, itinerary_data, 1))
             con.commit()
         return jsonify({"success": True, "redirect_url": url_for('present_trip')})
     except Exception as e:
@@ -490,12 +484,12 @@ def delete_trip():
         flash("Invalid trip ID.")
         return redirect(url_for('present_trip'))
     try:
-        with sqlite3.connect('users.db') as con:
+        with connect() as con:
             cur = con.cursor()
             # Verify the trip belongs to the logged-in user before deleting
             cur.execute("SELECT username FROM trips WHERE id = ?", (trip_id,))
             row = cur.fetchone()
-            if row and row[0] == session['username']:
+            if row and row['username'] == session['username']:
                 cur.execute("DELETE FROM trips WHERE id = ?", (trip_id,))
                 con.commit()
                 flash("Trip deleted successfully.")
@@ -516,7 +510,7 @@ def feedback():
             flash("Feedback cannot be empty.")
             return redirect(url_for('feedback'))
         try:
-            with sqlite3.connect('users.db') as con:
+            with connect() as con:
                 cur = con.cursor()
                 cur.execute("INSERT INTO feedback (username, feedback_text, created_at) VALUES (?, ?, ?)",
                             (username, feedback_text, datetime.now()))
@@ -532,8 +526,7 @@ def feedback():
 @admin_required
 def view_feedback():
     try:
-        with sqlite3.connect('users.db') as con:
-            con.row_factory = sqlite3.Row
+        with connect() as con:
             cur = con.cursor()
             # Fetch trip-specific feedback joined with trip destination
             cur.execute('''
@@ -667,8 +660,7 @@ def trip_feedback(trip_id):
     if 'username' not in session:
         return redirect(url_for('login'))
     username = session['username']
-    with sqlite3.connect('users.db') as con:
-        con.row_factory = sqlite3.Row
+    with connect() as con:
         cur = con.cursor()
         # Verify trip belongs to user and has ended
         cur.execute("SELECT * FROM trips WHERE id = ? AND username = ?", (trip_id, username))
@@ -712,7 +704,7 @@ def submit_trip_feedback(trip_id):
         flash("Invalid star rating.")
         return redirect(url_for('trip_feedback', trip_id=trip_id))
 
-    with sqlite3.connect('users.db') as con:
+    with connect() as con:
         cur = con.cursor()
         # Verify trip belongs to user
         cur.execute("SELECT * FROM trips WHERE id = ? AND username = ?", (trip_id, username))
@@ -734,8 +726,7 @@ def submit_trip_feedback(trip_id):
 @admin_required
 def admin_dashboard():
     try:
-        with sqlite3.connect('users.db') as con:
-            con.row_factory = sqlite3.Row
+        with connect() as con:
             cur = con.cursor()
             # Fetch all feedback entries
             cur.execute('''

@@ -15,7 +15,28 @@ spec:
     spec:
       containers:
         - name: tripplanner
-          image: tripplanner:v1
+          image: tripplanner:v2
           imagePullPolicy: Never
+          env:
+            - name: PGHOST
+              value: tripplanner-postgres
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: tripplanner
+            - name: PGUSER
+              value: tripplanner
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tripplanner-db
+                  key: password
           ports:
             - containerPort: 5000
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16-alpine
+          command:
+            - sh
+            - -c
+            - until pg_isready -h tripplanner-postgres -p 5432 -U tripplanner -d tripplanner; do sleep 2; done
